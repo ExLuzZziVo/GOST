@@ -65,6 +65,41 @@ namespace GOST.Managers
 
         public byte[] Encode()
         {
+           switch (type)
+            {
+                case CipherTypes.Substitution:
+                    SubstitutionEncode();
+                    break;
+                case CipherTypes.XOR:
+                    XOREncode();
+                    break;
+                case CipherTypes.ReverseXOR:
+                    ReverseXOREncode();
+                    break;
+                case CipherTypes.MAC:
+                    MACEncode();
+                    break;
+            }
+            return new byte[] { 1 };
+        }
+
+        public byte[] SubstitutionEncode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] XOREncode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] ReverseXOREncode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] MACEncode()
+        {
             throw new NotImplementedException();
         }
     }

@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ciphers\MACCipher.cs" />
+    <Compile Include="Ciphers\ReverseXORCipher.cs" />
     <Compile Include="Ciphers\SubstitutionCipher.cs" />
+    <Compile Include="Ciphers\XORCipher.cs" />
     <Compile Include="Interfaces\ICipher.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Managers\GOSTManaged.cs" />

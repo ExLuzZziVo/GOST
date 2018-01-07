@@ -21,5 +21,9 @@ namespace GOST.Interfaces
         /// </summary>
         /// <returns>Результат шифрования.</returns>
         byte[] Encode();
+        byte[] SubstitutionEncode();
+        byte[] XOREncode();
+        byte[] ReverseXOREncode();
+        byte[] MACEncode();
     }
 }
