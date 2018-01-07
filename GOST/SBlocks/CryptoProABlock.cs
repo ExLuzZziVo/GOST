@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GOST.Ciphers
+namespace GOST.SBlocks
 {
-    class XORCipher : ICipher
+    class CryptoProABlock : ISBlocks
     {
     }
 }

@@ -46,8 +46,15 @@
     <Compile Include="Ciphers\XORCipher.cs" />
     <Compile Include="Interfaces\ICipher.cs" />
     <Compile Include="Interfaces\IManager.cs" />
-    <Compile Include="Managers\GOSTManaged.cs" />
+    <Compile Include="GOSTManaged.cs" />
+    <Compile Include="Interfaces\ISBlocks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SBlocks\CryptoProABlock.cs" />
+    <Compile Include="SBlocks\CryptoProBBlock.cs" />
+    <Compile Include="SBlocks\CryptoProCBlock.cs" />
+    <Compile Include="SBlocks\CryptoProDBlock.cs" />
+    <Compile Include="SBlocks\GOSTBlock.cs" />
+    <Compile Include="SBlocks\TC26Block.cs" />
     <Compile Include="Types\Types.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

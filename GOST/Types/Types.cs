@@ -11,4 +11,9 @@ namespace GOST.Types
     {
         Substitution, XOR, ReverseXOR, MAC
     }
+
+    public enum SBlockTypes
+    {
+        GOST, CryptoProA, CryptoProB, CryptoProC, CryptoProD, TC26
+    }
 }

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("GOST")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("GOST 28147-89 cipher")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Артем Смолянченко (github.com/MiNGRotten)")]
 [assembly: AssemblyProduct("GOST")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © Артем Смолянченко (github.com/MiNGRotten) 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

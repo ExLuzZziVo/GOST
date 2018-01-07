@@ -21,9 +21,25 @@ namespace GOST.Interfaces
         /// </summary>
         /// <returns>Результат шифрования.</returns>
         byte[] Encode();
+        /// <summary>
+        /// Шифрование подстановкой.
+        /// </summary>
+        /// <returns>Результат шифрования.</returns>
         byte[] SubstitutionEncode();
+        /// <summary>
+        /// Шифрование гаммированием.
+        /// </summary>
+        /// <returns>Результат шифрования.</returns>
         byte[] XOREncode();
+        /// <summary>
+        /// Шифрование гаммированием с обратной связью.
+        /// </summary>
+        /// <returns>Результат шифрования.</returns>
         byte[] ReverseXOREncode();
+        /// <summary>
+        /// Шифрование иммитовставкой.
+        /// </summary>
+        /// <returns>Результат шифрования.</returns>
         byte[] MACEncode();
     }
 }

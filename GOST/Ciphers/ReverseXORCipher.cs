@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GOST.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GOST.Ciphers
 {
-    class ReverseXORCipher
+    class ReverseXORCipher : ICipher
     {
     }
 }
