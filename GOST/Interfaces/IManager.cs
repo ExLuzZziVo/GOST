@@ -6,10 +6,12 @@
         /// Свойство - ключ.
         /// </summary>
         byte[] Key { get; set; }
+
         /// <summary>
         /// Свойство - сообщение.
         /// </summary>
         byte[] Message { get; set; }
+
         /// <summary>
         /// Шифрование.
         /// </summary>
