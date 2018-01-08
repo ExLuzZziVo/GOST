@@ -65,6 +65,13 @@ namespace GOST
             }
         }
 
+        /// <summary>
+        /// Конструктор менеджера.
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="message">Сообщение.</param>
+        /// <param name="cipherType">Тип шифрования.</param>
+        /// <param name="sBlockType">SBlock таблица.</param>
         public GOSTManaged(byte[] key, byte[] message, CipherTypes cipherType, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;

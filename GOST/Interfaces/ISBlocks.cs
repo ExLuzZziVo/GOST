@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace GOST.Interfaces
 {
-    interface ISBlocks
+    public interface ISBlocks
     {
+        byte[][] SBlockTable { get; }
     }
 }
