@@ -95,6 +95,7 @@ namespace GOST
             Message = message;
             this.cipherType = cipherType;
             this.sBlockType = sBlockType;
+            subKeys = new List<uint>();
         }
 
         /// <summary>
