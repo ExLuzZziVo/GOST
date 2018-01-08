@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GOST.SBlocks
 {
-    public class CryptoProCBlock : ISBlocks
+    internal class CryptoProCBlock : ISBlocks
     {
         public byte[][] SBlockTable { get; } =
         {

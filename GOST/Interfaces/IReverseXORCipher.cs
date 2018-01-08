@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace GOST.Interfaces
 {
-    internal interface ISBlocks
+    internal interface IReverseXORCipher : ICipher
     {
-        byte[][] SBlockTable { get; }
     }
 }

@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace GOST.Ciphers
 {
-    class SubstitutionCipher : ICipher
+    internal class SubstitutionCipher : ICipher
     {
+        public byte[] EncodeProcess(byte[] data, byte[] subKey)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

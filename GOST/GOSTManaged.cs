@@ -1,19 +1,40 @@
-﻿using GOST.Interfaces;
+﻿using GOST.Ciphers;
+using GOST.Interfaces;
 using GOST.Types;
-using GOST.Ciphers;
 using System;
-using System.Text;
+using System.Collections.Generic;
 
 namespace GOST
 {
     public class GOSTManaged : IManager
     {
+        /// <summary>
+        /// Шифровальщик.
+        /// </summary>
         private ICipher cipher;
+        /// <summary>
+        /// Тип шифровальщика.
+        /// </summary>
         private CipherTypes cipherType;
+        /// <summary>
+        /// Тип SBlock таблицы.
+        /// </summary>
         private SBlockTypes sBlockType;
-        // 256 битный ключ.
+        /// <summary>
+        /// 256 битный ключ.
+        /// </summary>
         private byte[] key;
-        // Сообщение.
+        /// <summary>
+        /// 32 блока подключей.
+        /// Основа подключей - 8 32ух битных блоков.
+        /// 1 - 8 блоки: 8 основных 32 битных блоков от обычного ключа.
+        /// 9 - 24 блоки: циклическое повторение блоков 1 - 8 (нумерация от младших к старшим битам).
+        /// 25 - 32 блоки : блоки 8 - 1 (именно в таком порядке).
+        /// </summary>
+        private List<byte[]> subKeys;
+        /// <summary>
+        /// Сообщение.
+        /// </summary>
         private byte[] message;
 
         /// <summary>
@@ -112,7 +133,7 @@ namespace GOST
         /// Шифрование подстановкой.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        public byte[] SubstitutionEncode()
+        private byte[] SubstitutionEncode()
         {
             cipher = new SubstitutionCipher();
             return new byte[] { 1 };
@@ -122,7 +143,7 @@ namespace GOST
         /// Шифрование гаммированием.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        public byte[] XOREncode()
+        private byte[] XOREncode()
         {
             cipher = new XORCipher();
             return new byte[] { 1 };
@@ -132,7 +153,7 @@ namespace GOST
         /// Шифрование гаммированием с обратной связью.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        public byte[] ReverseXOREncode()
+        private byte[] ReverseXOREncode()
         {
             cipher = new ReverseXORCipher();
             return new byte[] { 1 };
@@ -142,7 +163,7 @@ namespace GOST
         /// Шифрование иммитовставкой.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        public byte[] MACEncode()
+        private byte[] MACEncode()
         {
             cipher = new MACCipher();
             return new byte[] { 1 };

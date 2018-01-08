@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GOST.SBlocks
 {
-    public class TC26Block : ISBlocks
+    internal class TC26Block : ISBlocks
     {
         public byte[][] SBlockTable { get; } =
         {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GOST.Interfaces
+﻿namespace GOST.Interfaces
 {
-    interface IManager
+    internal interface IManager
     {
         /// <summary>
         /// Свойство - ключ.
@@ -21,25 +15,5 @@ namespace GOST.Interfaces
         /// </summary>
         /// <returns>Результат шифрования.</returns>
         byte[] Encode();
-        /// <summary>
-        /// Шифрование подстановкой.
-        /// </summary>
-        /// <returns>Результат шифрования.</returns>
-        byte[] SubstitutionEncode();
-        /// <summary>
-        /// Шифрование гаммированием.
-        /// </summary>
-        /// <returns>Результат шифрования.</returns>
-        byte[] XOREncode();
-        /// <summary>
-        /// Шифрование гаммированием с обратной связью.
-        /// </summary>
-        /// <returns>Результат шифрования.</returns>
-        byte[] ReverseXOREncode();
-        /// <summary>
-        /// Шифрование иммитовставкой.
-        /// </summary>
-        /// <returns>Результат шифрования.</returns>
-        byte[] MACEncode();
     }
 }
