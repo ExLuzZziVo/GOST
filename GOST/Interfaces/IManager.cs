@@ -17,5 +17,11 @@
         /// </summary>
         /// <returns>Результат шифрования.</returns>
         byte[] Encode();
+
+        /// <summary>
+        /// Дешифрование.
+        /// </summary>
+        /// <returns>Результат дешифрования.</returns>
+        byte[] Decode();
     }
 }

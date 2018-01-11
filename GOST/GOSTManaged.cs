@@ -15,22 +15,27 @@ namespace GOST
         /// Шифровальщик.
         /// </summary>
         private ICipher cipher;
+
         /// <summary>
         /// SBlock таблица.
         /// </summary>
         private ISBlocks sBlock;
+
         /// <summary>
         /// Тип шифровальщика.
         /// </summary>
         private CipherTypes cipherType;
+
         /// <summary>
         /// Тип SBlock таблицы.
         /// </summary>
         private SBlockTypes sBlockType;
+
         /// <summary>
         /// 256 битный ключ.
         /// </summary>
         private byte[] key;
+
         /// <summary>
         /// 32 блока подключей.
         /// Основа подключей - 8 32ух битных блоков.
@@ -39,6 +44,7 @@ namespace GOST
         /// 25 - 32 блоки : блоки 8 - 1 (именно в таком порядке).
         /// </summary>
         private List<uint> subKeys;
+
         /// <summary>
         /// Сообщение.
         /// </summary>
@@ -96,6 +102,7 @@ namespace GOST
             this.cipherType = cipherType;
             this.sBlockType = sBlockType;
             subKeys = new List<uint>();
+            SetSBlock();
         }
 
         /// <summary>
@@ -105,24 +112,48 @@ namespace GOST
         public byte[] Encode()
         {
             byte[] encode;
+            encode = PrepareProcess(true);
+            return encode;
+        }
+
+        /// <summary>
+        /// Дешифрование.
+        /// </summary>
+        /// <returns>Результат дешифрования.</returns>
+        public byte[] Decode()
+        {
+            byte[] decode;
+            decode = PrepareProcess(false);
+            return decode;
+        }
+
+        /// <summary>
+        /// Подготовка к шифрованию/дешифрованию.
+        /// </summary>
+        /// <param name="flag">Шифрование/Дешифрование</param>
+        /// <returns>Результат.</returns>
+        private byte[] PrepareProcess(bool flag)
+        {
+            byte[] encode;
             switch (cipherType)
             {
                 case CipherTypes.Substitution:
-                    encode = SubstitutionEncode();
+                    encode = SubstitutionProcess(flag);
                     break;
                 case CipherTypes.XOR:
-                    encode = XOREncode();
+                    encode = XORProcess(flag);
                     break;
                 case CipherTypes.ReverseXOR:
-                    encode = ReverseXOREncode();
+                    encode = ReverseXORProcess(flag);
                     break;
                 case CipherTypes.MAC:
-                    encode = MACEncode();
+                    encode = MACProcess(flag);
                     break;
                 default:
                     encode = null;
                     throw new Exception("Something wrong...");
             }
+
             return encode;
         }
 
@@ -162,24 +193,30 @@ namespace GOST
         /// </summary>
         private void GetSubKeys()
         {
-            byte[] res = new byte[8];
+            byte[] res = new byte[4];
             // Первая стадия.
+            int j = 0;
             for (int i = 0; i != key.Length; i++)
             {
-                res[i] = key[i];
-                if (i%4 == 0)
+                res[j] = key[i];
+
+                if (j%3 == 0 && j != 0)
                 {
                     subKeys.Add(BitConverter.ToUInt32(res, 0));
+                    j = 0;
                 }
+                else
+                {
+                    j++;
+                }               
             }
             // Вторая стадия.
-            // TODO: Выспишься - проверь что ты написал за бред тут.
-            for (int i = 0; i != 15; i++)
+            for (int i = 0; i != 16; i++)
             {
                 subKeys.Add(subKeys[i]);
             }
             // Третья стадия.
-            for (int i = 7; i != 0; i--)
+            for (int i = 7; i != -1; i--)
             {
                 subKeys.Add(subKeys[i]);
             }           
@@ -189,15 +226,28 @@ namespace GOST
         /// Шифрование подстановкой.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        private byte[] SubstitutionEncode()
+        private byte[] SubstitutionProcess(bool flag)
         {
             cipher = new SubstitutionCipher(sBlock);
             GetSubKeys();
+            if (!flag)
+            {
+                subKeys.Reverse();
+            }
             byte[] res = new byte[message.Length];
+            int index = 0;
+
             foreach (var chunk in ReadByChunk())
             {
-                // TODO: Тестируй это.
-                res.Concat(cipher.EncodeProcess(chunk, subKeys));
+                if (flag)
+                {
+                    Array.Copy(cipher.EncodeProcess(chunk, subKeys), 0, res, index, 8);
+                }
+                else
+                {
+                    Array.Copy(cipher.DecodeProcess(chunk, subKeys), 0, res, index, 8);
+                }
+                index += 8;
             }
             return res;
         }
@@ -206,7 +256,7 @@ namespace GOST
         /// Шифрование гаммированием.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        private byte[] XOREncode()
+        private byte[] XORProcess(bool flag)
         {
             cipher = new XORCipher();
             return new byte[] { 1 };
@@ -216,7 +266,7 @@ namespace GOST
         /// Шифрование гаммированием с обратной связью.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        private byte[] ReverseXOREncode()
+        private byte[] ReverseXORProcess(bool flag)
         {
             cipher = new ReverseXORCipher();
             return new byte[] { 1 };
@@ -226,7 +276,7 @@ namespace GOST
         /// Шифрование иммитовставкой.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        private byte[] MACEncode()
+        private byte[] MACProcess(bool flag)
         {
             cipher = new MACCipher();
             return new byte[] { 1 };
@@ -238,13 +288,13 @@ namespace GOST
         /// <returns>64-х битный блок.</returns>
         private IEnumerable<byte[]> ReadByChunk()
         {
-            for (int i = 0; i < message.Length; i += 64)
+            for (int i = 0; i < message.Length; i += 8)
             {
-                byte[] res = new byte[64];
+                byte[] res = new byte[8];
 
                 try
                 {
-                    Array.Copy(message, res, 64);
+                    Array.Copy(message, i, res, 0, 8);
                 }
                 catch (Exception)
                 {

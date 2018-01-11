@@ -34,7 +34,7 @@ namespace GOST.Ciphers
 
             for (int i = 0; i != 32; i++)
             {
-                var round = big ^ Function(little, subKeys[GetSubKeyIndex(i, true)]);
+                var round = big ^ Function(little, subKeys[i]);
 
                 if (i < 31)
                 {
@@ -47,7 +47,9 @@ namespace GOST.Ciphers
                 }
             }
 
-            var result = BitConverter.GetBytes(uint.Parse(little.ToString() + big.ToString()));
+            byte[] result = new byte[8];
+            Array.Copy(BitConverter.GetBytes(little), 0, result, 0, 4);
+            Array.Copy(BitConverter.GetBytes(big), 0, result, 4, 4);
             return result;
         }
 
@@ -59,20 +61,7 @@ namespace GOST.Ciphers
         /// <returns>64-х битный блок открытого текста.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Получение индекса субключа.
-        /// </summary>
-        /// <param name="iteration">Текущая итерация шифрования блока.</param>
-        /// <param name="encrypt">Шифрование/Дешифрование.</param>
-        /// <returns>Индекс субключа.</returns>
-        public int GetSubKeyIndex(int iteration, bool encrypt)
-        {
-            // TODO: Переписать надо бы. Думаю не выбирать отсюда процесс инвертирования, а инвертировать сам лист с подключами до шифрования.
-            return encrypt ? (iteration < 24) ? iteration % 8 : 7 - (iteration % 8)
-                   : (iteration < 8) ? iteration % 8 : 7 - (iteration % 8);
+            return EncodeProcess(data, subKeys);
         }
 
         /// <summary>

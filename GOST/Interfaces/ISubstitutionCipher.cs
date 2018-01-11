@@ -10,14 +10,6 @@ namespace GOST.Interfaces
     internal interface ISubstitutionCipher : ICipher
     {
         /// <summary>
-        /// Получение индекса субключа.
-        /// </summary>
-        /// <param name="iteration">Текущая итерация шифрования блока.</param>
-        /// <param name="encrypt">Шифрование/Дешифрование.</param>
-        /// <returns>Индекс субключа.</returns>
-        int GetSubKeyIndex(int iteration, bool encrypt);
-
-        /// <summary>
         /// Основная функция шифрования.
         /// </summary>
         /// <param name="littleBits">Младшие биты.</param>
