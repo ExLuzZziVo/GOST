@@ -45,11 +45,18 @@ namespace GOST.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("1234567887654321");
 
-            var gost = new GOSTManaged(key, message, CipherTypes.Substitution);
-            var encode = gost.Encode();
+            byte[] encode = new byte[16];
+            byte[] decode = new byte[16];
 
-            gost = new GOSTManaged(key, encode, CipherTypes.Substitution);
-            var decode = gost.Decode();
+            using (var gost = new GOSTManaged(key, message, CipherTypes.Substitution))
+            {
+                encode = gost.Encode();
+            }
+
+            using (var gost = new GOSTManaged(key, encode, CipherTypes.Substitution))
+            {
+                decode = gost.Decode();
+            }
 
             Assert.AreEqual(Encoding.Default.GetString(message), Encoding.Default.GetString(decode));
         }

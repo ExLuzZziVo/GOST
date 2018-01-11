@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace GOST
 {
-    public class GOSTManaged : IManager
+    public class GOSTManaged : IManager, IDisposable
     {
         /// <summary>
         /// Шифровальщик.
@@ -44,6 +44,11 @@ namespace GOST
         /// 25 - 32 блоки : блоки 8 - 1 (именно в таком порядке).
         /// </summary>
         private List<uint> subKeys;
+
+        /// <summary>
+        /// Флаг для IDisposable.
+        /// </summary>
+        private bool released;
 
         /// <summary>
         /// Сообщение.
@@ -97,6 +102,7 @@ namespace GOST
         /// <param name="sBlockType">SBlock таблица.</param>
         public GOSTManaged(byte[] key, byte[] message, CipherTypes cipherType, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
+            released = false;
             Key = key;
             Message = message;
             this.cipherType = cipherType;
@@ -303,7 +309,20 @@ namespace GOST
 
                 yield return res;
             }
-                
+        }
+
+        public void Dispose()
+        {
+            if (!released)
+            {
+                released = true;
+
+                cipher = null;
+                sBlock = null;
+                message = null;
+                key = null;
+                subKeys.Clear();
+            }
         }
     }
 }
