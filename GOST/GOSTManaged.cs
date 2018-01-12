@@ -138,7 +138,7 @@ namespace GOST
             {
                 res[j] = key[i];
 
-                if (j%3 == 0 && j != 0)
+                if (j % 3 == 0 && j != 0)
                 {
                     subKeys.Add(BitConverter.ToUInt32(res, 0));
                     j = 0;
@@ -146,7 +146,7 @@ namespace GOST
                 else
                 {
                     j++;
-                }               
+                }
             }
             // Вторая стадия.
             for (int i = 0; i != 16; i++)
@@ -157,13 +157,17 @@ namespace GOST
             for (int i = 7; i != -1; i--)
             {
                 subKeys.Add(subKeys[i]);
-            }           
+            }
         }
 
         public byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
             Message = message;
+            if (message.Length % 8 != 0)
+            {
+                throw new ArgumentException("Block must have 64 bit length");
+            }
             this.sBlockType = sBlockType;
             SetSBlock();
 
@@ -177,6 +181,10 @@ namespace GOST
         {
             Key = key;
             Message = message;
+            if (message.Length % 8 != 0)
+            {
+                throw new ArgumentException("Block must have 64 bit length");
+            }
             this.sBlockType = sBlockType;
             SetSBlock();
 
