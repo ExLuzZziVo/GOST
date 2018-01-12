@@ -27,7 +27,10 @@ namespace GOST.Ciphers.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("message");
 
-            var gost = new GOSTManaged(key, message, CipherTypes.Substitution);
+            var gost = new GOSTManaged
+            {
+                Key = key
+            };
 
             PrivateObject priv = new PrivateObject(gost);
             priv.Invoke("GetSubKeys");

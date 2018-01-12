@@ -9,6 +9,7 @@ namespace GOST.Interfaces
 {
     internal interface ISubstitutionCipher : ICipher
     {
+        
         /// <summary>
         /// Основная функция шифрования.
         /// </summary>

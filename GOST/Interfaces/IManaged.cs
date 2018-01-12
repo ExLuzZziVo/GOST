@@ -1,6 +1,8 @@
-﻿namespace GOST.Interfaces
+﻿using GOST.Types;
+
+namespace GOST.Interfaces
 {
-    internal interface IManager
+    internal interface IManaged
     {
         /// <summary>
         /// Свойство - ключ.
@@ -16,12 +18,12 @@
         /// Шифрование.
         /// </summary>
         /// <returns>Результат шифрования.</returns>
-        byte[] Encode();
+        byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
         /// Дешифрование.
         /// </summary>
         /// <returns>Результат дешифрования.</returns>
-        byte[] Decode();
+        byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
     }
 }

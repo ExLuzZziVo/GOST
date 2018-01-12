@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("GOST")]
 [assembly: AssemblyDescription("GOST 28147-89 cipher")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Артем Смолянченко (github.com/MiNGRotten)")]
+[assembly: AssemblyCompany("Artoym Smolyanchenko (github.com/MiNGRotten)")]
 [assembly: AssemblyProduct("GOST")]
-[assembly: AssemblyCopyright("Copyright © Артем Смолянченко (github.com/MiNGRotten) 2018")]
+[assembly: AssemblyCopyright("Copyright © Artoym Smolyanchenko (github.com/MiNGRotten) 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

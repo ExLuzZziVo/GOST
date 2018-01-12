@@ -8,5 +8,6 @@ namespace GOST.Interfaces
 {
     internal interface IXORCipher : ICipher
     {
+
     }
 }

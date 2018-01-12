@@ -15,7 +15,11 @@ namespace GOST.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("message");
 
-            var gost = new GOSTManaged(key, message, CipherTypes.Substitution);
+            var gost = new GOSTManaged
+            {
+                Key = key,
+                Message = message
+            };
 
             Console.WriteLine(Encoding.Default.GetString(gost.Key));
             Console.WriteLine(Encoding.Default.GetString(key));
@@ -30,7 +34,10 @@ namespace GOST.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("message");
 
-            var gost = new GOSTManaged(key, message, CipherTypes.Substitution);
+            var gost = new GOSTManaged
+            {
+                Key = key
+            };
 
             PrivateObject priv = new PrivateObject(gost);
             priv.Invoke("GetSubKeys");
@@ -48,14 +55,43 @@ namespace GOST.Tests
             byte[] encode = new byte[16];
             byte[] decode = new byte[16];
 
-            using (var gost = new GOSTManaged(key, message, CipherTypes.Substitution))
+            using (var gost = new GOSTManaged())
             {
-                encode = gost.Encode();
+                encode = gost.SubstitutionEncode(key, message);
             }
 
-            using (var gost = new GOSTManaged(key, encode, CipherTypes.Substitution))
+            using (var gost = new GOSTManaged())
             {
-                decode = gost.Decode();
+                decode = gost.SubstitutionDecode(key, encode);
+            }
+
+            Assert.AreEqual(Encoding.Default.GetString(message), Encoding.Default.GetString(decode));
+        }
+
+        [TestMethod()]
+        public void PerfomanceEncodeDecodeMessageTest()
+        {
+            byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
+            byte[] message = new byte[100000000];
+
+            var rand = new Random();
+
+            for (int i = 0; i != 100000000; i++)
+            {
+                message[i] = Convert.ToByte(rand.Next(9));
+            }
+
+            byte[] encode = new byte[100000000];
+            byte[] decode = new byte[100000000];
+
+            using (var gost = new GOSTManaged())
+            {
+                encode = gost.SubstitutionEncode(key, message);
+            }
+
+            using (var gost = new GOSTManaged())
+            {
+                decode = gost.SubstitutionDecode(key, encode);
             }
 
             Assert.AreEqual(Encoding.Default.GetString(message), Encoding.Default.GetString(decode));

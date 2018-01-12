@@ -46,7 +46,7 @@
     <Compile Include="Ciphers\XORCipher.cs" />
     <Compile Include="Interfaces\ICipher.cs" />
     <Compile Include="Interfaces\IMACCipher.cs" />
-    <Compile Include="Interfaces\IManager.cs" />
+    <Compile Include="Interfaces\IManaged.cs" />
     <Compile Include="GOSTManaged.cs" />
     <Compile Include="Interfaces\IReverseXORCipher.cs" />
     <Compile Include="Interfaces\ISBlocks.cs" />

@@ -10,12 +10,12 @@ namespace GOST.Ciphers
 {
     internal class MACCipher : IMACCipher
     {
-        public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
+        public byte[] DecodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal = null)
         {
             throw new NotImplementedException();
         }
 
-        public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
+        public byte[] EncodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal = null)
         {
             throw new NotImplementedException();
         }

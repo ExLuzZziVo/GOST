@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace GOST
 {
-    public class GOSTManaged : IManager, IDisposable
+    public class GOSTManaged : IManaged, IDisposable
     {
         /// <summary>
         /// Шифровальщик.
@@ -20,11 +20,6 @@ namespace GOST
         /// SBlock таблица.
         /// </summary>
         private ISBlocks sBlock;
-
-        /// <summary>
-        /// Тип шифровальщика.
-        /// </summary>
-        private CipherTypes cipherType;
 
         /// <summary>
         /// Тип SBlock таблицы.
@@ -58,6 +53,7 @@ namespace GOST
         /// <summary>
         /// Проверка ключа на величину.
         /// </summary>
+        /// <exception cref="ArgumentException">Ключ должен иметь длину в 256 бит.</exception>
         public byte[] Key
         {
             get { return key; }
@@ -65,7 +61,7 @@ namespace GOST
             {
                 if (value.Length != 32)
                 {
-                    throw new ArgumentException("Key Overflow. Try to use 256 bit key.");
+                    throw new ArgumentException("Wrong key. Try to use 256 bit key.");
                 }
                 else if (value.Length == 32)
                 {
@@ -77,6 +73,7 @@ namespace GOST
         /// <summary>
         /// Проверка сообщения на null.
         /// </summary>
+        /// <exception cref="ArgumentException">Пустое сообщение для шифрования.</exception>
         public byte[] Message
         {
             get { return message; }
@@ -94,78 +91,18 @@ namespace GOST
         }
 
         /// <summary>
-        /// Конструктор менеджера.
+        /// Конструктор.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="message">Сообщение.</param>
-        /// <param name="cipherType">Тип шифрования.</param>
-        /// <param name="sBlockType">SBlock таблица.</param>
-        public GOSTManaged(byte[] key, byte[] message, CipherTypes cipherType, SBlockTypes sBlockType = SBlockTypes.GOST)
+        public GOSTManaged()
         {
             released = false;
-            Key = key;
-            Message = message;
-            this.cipherType = cipherType;
-            this.sBlockType = sBlockType;
             subKeys = new List<uint>();
-            SetSBlock();
-        }
-
-        /// <summary>
-        /// Шифрование.
-        /// </summary>
-        /// <returns>Результат шифрования.</returns>
-        public byte[] Encode()
-        {
-            byte[] encode;
-            encode = PrepareProcess(true);
-            return encode;
-        }
-
-        /// <summary>
-        /// Дешифрование.
-        /// </summary>
-        /// <returns>Результат дешифрования.</returns>
-        public byte[] Decode()
-        {
-            byte[] decode;
-            decode = PrepareProcess(false);
-            return decode;
-        }
-
-        /// <summary>
-        /// Подготовка к шифрованию/дешифрованию.
-        /// </summary>
-        /// <param name="flag">Шифрование/Дешифрование</param>
-        /// <returns>Результат.</returns>
-        private byte[] PrepareProcess(bool flag)
-        {
-            byte[] encode;
-            switch (cipherType)
-            {
-                case CipherTypes.Substitution:
-                    encode = SubstitutionProcess(flag);
-                    break;
-                case CipherTypes.XOR:
-                    encode = XORProcess(flag);
-                    break;
-                case CipherTypes.ReverseXOR:
-                    encode = ReverseXORProcess(flag);
-                    break;
-                case CipherTypes.MAC:
-                    encode = MACProcess(flag);
-                    break;
-                default:
-                    encode = null;
-                    throw new Exception("Something wrong...");
-            }
-
-            return encode;
         }
 
         /// <summary>
         /// Установка выбранного SBlockTable.
         /// </summary>
+        /// <exception cref="Exception">Неизвестное исключение. Обратитесь к разработчику.</exception>
         private void SetSBlock()
         {
             switch (sBlockType)
@@ -228,9 +165,36 @@ namespace GOST
             }           
         }
 
+        public byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            Key = key;
+            Message = message;
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            cipher = new SubstitutionCipher(sBlock);
+
+            byte[] encode = SubstitutionProcess(true);
+            return encode;
+        }
+
+        public byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            Key = key;
+            Message = message;
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            cipher = new SubstitutionCipher(sBlock);
+
+            byte[] decode = SubstitutionProcess(false);
+            return decode;
+        }
+
         /// <summary>
         /// Шифрование подстановкой.
         /// </summary>
+        /// <param name="flag">Шифрование/Дешифрование</param>
         /// <returns>Результат шифрования.</returns>
         private byte[] SubstitutionProcess(bool flag)
         {
@@ -261,10 +225,11 @@ namespace GOST
         /// <summary>
         /// Шифрование гаммированием.
         /// </summary>
+        /// <param name="flag">Шифрование/Дешифрование</param>
         /// <returns>Результат шифрования.</returns>
         private byte[] XORProcess(bool flag)
         {
-            cipher = new XORCipher();
+            cipher = new XORCipher(sBlock);
             return new byte[] { 1 };
         }
 
@@ -281,6 +246,7 @@ namespace GOST
         /// <summary>
         /// Шифрование иммитовставкой.
         /// </summary>
+        /// <param name="flag">Шифрование/Дешифрование</param>
         /// <returns>Результат шифрования.</returns>
         private byte[] MACProcess(bool flag)
         {
@@ -292,6 +258,8 @@ namespace GOST
         /// Чтение сообщения по блокам.
         /// </summary>
         /// <returns>64-х битный блок.</returns>
+        /// <exception cref="ArgumentException">Сообщение должно быть кратно 64 битам.</exception>
+        // TODO: Возможно этот метод надо будет переделать или убрать в шифр подстановки, только для него работает это ограничение.
         private IEnumerable<byte[]> ReadByChunk()
         {
             for (int i = 0; i < message.Length; i += 8)
@@ -311,6 +279,9 @@ namespace GOST
             }
         }
 
+        /// <summary>
+        /// Освобождение ресурсов.
+        /// </summary>
         public void Dispose()
         {
             if (!released)
