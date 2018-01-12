@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GOST.Interfaces
 {
-    internal interface IMACCipher : ICipher
+    internal interface IMACCipher
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GOST.Interfaces
 {
-    internal interface IReverseXORCipher : ICipher
+    internal interface IReverseXORCipher
     {
     }
 }

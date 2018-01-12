@@ -12,11 +12,6 @@ namespace GOST
     public class GOSTManaged : IManaged, IDisposable
     {
         /// <summary>
-        /// Шифровальщик.
-        /// </summary>
-        private ICipher cipher;
-
-        /// <summary>
         /// SBlock таблица.
         /// </summary>
         private ISBlocks sBlock;
@@ -172,7 +167,7 @@ namespace GOST
             this.sBlockType = sBlockType;
             SetSBlock();
 
-            cipher = new SubstitutionCipher(sBlock);
+            var cipher = new SubstitutionCipher(sBlock);
 
             byte[] encode = SubstitutionProcess(true);
             return encode;
@@ -185,7 +180,7 @@ namespace GOST
             this.sBlockType = sBlockType;
             SetSBlock();
 
-            cipher = new SubstitutionCipher(sBlock);
+            var cipher = new SubstitutionCipher(sBlock);
 
             byte[] decode = SubstitutionProcess(false);
             return decode;
@@ -198,7 +193,7 @@ namespace GOST
         /// <returns>Результат шифрования.</returns>
         private byte[] SubstitutionProcess(bool flag)
         {
-            cipher = new SubstitutionCipher(sBlock);
+            var cipher = new SubstitutionCipher(sBlock);
             GetSubKeys();
             if (!flag)
             {
@@ -229,7 +224,7 @@ namespace GOST
         /// <returns>Результат шифрования.</returns>
         private byte[] XORProcess(bool flag)
         {
-            cipher = new XORCipher(sBlock);
+            var cipher = new XORCipher(sBlock);
             return new byte[] { 1 };
         }
 
@@ -239,7 +234,7 @@ namespace GOST
         /// <returns>Результат шифрования.</returns>
         private byte[] ReverseXORProcess(bool flag)
         {
-            cipher = new ReverseXORCipher();
+            var cipher = new ReverseXORCipher();
             return new byte[] { 1 };
         }
 
@@ -250,7 +245,7 @@ namespace GOST
         /// <returns>Результат шифрования.</returns>
         private byte[] MACProcess(bool flag)
         {
-            cipher = new MACCipher();
+            var cipher = new MACCipher();
             return new byte[] { 1 };
         }
 
@@ -288,7 +283,6 @@ namespace GOST
             {
                 released = true;
 
-                cipher = null;
                 sBlock = null;
                 message = null;
                 key = null;

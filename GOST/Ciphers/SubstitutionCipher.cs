@@ -26,9 +26,8 @@ namespace GOST.Ciphers
         /// </summary>
         /// <param name="data">64-х битный блок открытого текста.</param>
         /// <param name="subKeys">Коллекция подключей.</param>
-        /// <param name="synchrosignal">Шифропосылка. В данном типе шифрования не нужна.</param>
         /// <returns>64-х битный блок шифротекста.</returns>
-        public byte[] EncodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal = null)
+        public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
             var little = BitConverter.ToUInt32(data, 0);
             var big = BitConverter.ToUInt32(data, 4);
@@ -59,9 +58,8 @@ namespace GOST.Ciphers
         /// </summary>
         /// <param name="data">64-х битный блок шифротекста.</param>
         /// <param name="subKey">Подключ.</param>
-        /// <param name="synchrosignal">Шифропосылка. В данном типе шифрования не нужна.</param>
         /// <returns>64-х битный блок открытого текста.</returns>
-        public byte[] DecodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal = null)
+        public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {
             return EncodeProcess(data, subKeys);
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GOST.Interfaces
 {
-    internal interface IXORCipher : ICipher
+    internal interface IXORCipher
     {
 
     }
