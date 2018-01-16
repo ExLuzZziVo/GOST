@@ -27,6 +27,16 @@ namespace GOST
         private byte[] key;
 
         /// <summary>
+        /// Сообщение.
+        /// </summary>
+        private byte[] message;
+
+        /// <summary>
+        /// 64 битная синхропосылка.
+        /// </summary>
+        private byte[] synchroSignal;
+
+        /// <summary>
         /// 32 блока подключей.
         /// Основа подключей - 8 32ух битных блоков.
         /// 1 - 8 блоки: 8 основных 32 битных блоков от обычного ключа.
@@ -39,11 +49,6 @@ namespace GOST
         /// Флаг для IDisposable.
         /// </summary>
         private bool released;
-
-        /// <summary>
-        /// Сообщение.
-        /// </summary>
-        private byte[] message;
 
         /// <summary>
         /// Проверка ключа на величину.
@@ -81,6 +86,26 @@ namespace GOST
                 else
                 {
                     message = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверка синхропосылки.
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        public byte[] SynchroSignal
+        {
+            get { return synchroSignal; }
+            set
+            {
+                if (value.Length != 8)
+                {
+                    throw new ArgumentException("Wrong synchrosignal. Try to use 64 bit synchrosignal.");
+                }
+                else if (value.Length == 8)
+                {
+                    synchroSignal = value;
                 }
             }
         }
@@ -160,6 +185,15 @@ namespace GOST
             }
         }
 
+        /// <summary>
+        /// Шифрование подстановкой.
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="message">Данные кратные 64 битам.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Зашифрованные данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
@@ -171,12 +205,19 @@ namespace GOST
             this.sBlockType = sBlockType;
             SetSBlock();
 
-            var cipher = new SubstitutionCipher(sBlock);
-
             byte[] encode = SubstitutionProcess(true);
             return encode;
         }
 
+        /// <summary>
+        /// Дешифрование подстановкой.
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="message">Шифроданные кратные 64 битам.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Открытые данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
@@ -187,8 +228,6 @@ namespace GOST
             }
             this.sBlockType = sBlockType;
             SetSBlock();
-
-            var cipher = new SubstitutionCipher(sBlock);
 
             byte[] decode = SubstitutionProcess(false);
             return decode;
@@ -228,12 +267,63 @@ namespace GOST
         /// <summary>
         /// Шифрование гаммированием.
         /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="synchroSignal">64 битная шифропосылка.</param>
+        /// <param name="message">Открытые данные.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Зашифрованные данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public byte[] XOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            Key = key;
+            Message = message;
+            SynchroSignal = synchroSignal;
+
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            byte[] encode = XORProcess();
+            return encode;
+        }
+
+        /// <summary>
+        /// Дешифрование гаммированием.
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="synchroSignal">64 битная шифропосылка.</param>
+        /// <param name="message">Шифроданные.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Открытые данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public byte[] XORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            return XOREncode(key, synchroSignal, message, sBlockType); ;
+        }
+
+        /// <summary>
+        /// Шифрование гаммированием.
+        /// </summary>
         /// <param name="flag">Шифрование/Дешифрование</param>
         /// <returns>Результат шифрования.</returns>
-        private byte[] XORProcess(bool flag)
+        private byte[] XORProcess()
         {
             var cipher = new XORCipher(sBlock);
-            return new byte[] { 1 };
+
+            GetSubKeys();
+
+            byte[] res = new byte[message.Length];
+            int index = 0;
+
+            cipher.SetSynchroSignal(synchroSignal, subKeys);
+
+            foreach (var chunk in ReadByChunk())
+            {
+                Array.Copy(cipher.EncodeProcess(chunk, subKeys), 0, res, index, chunk.Length);
+                index += chunk.Length;
+            }
+            return res;
         }
 
         /// <summary>
@@ -262,21 +352,15 @@ namespace GOST
         /// </summary>
         /// <returns>64-х битный блок.</returns>
         /// <exception cref="ArgumentException">Сообщение должно быть кратно 64 битам.</exception>
-        // TODO: Возможно этот метод надо будет переделать или убрать в шифр подстановки, только для него работает это ограничение.
         private IEnumerable<byte[]> ReadByChunk()
         {
             for (int i = 0; i < message.Length; i += 8)
             {
-                byte[] res = new byte[8];
+                var min = Math.Min(8, message.Length - i);
 
-                try
-                {
-                    Array.Copy(message, i, res, 0, 8);
-                }
-                catch (Exception)
-                {
-                    throw new ArgumentException("Block must have 64 bit length");
-                }
+                byte[] res = new byte[min];
+
+                Array.Copy(message, i, res, 0, min);
 
                 yield return res;
             }

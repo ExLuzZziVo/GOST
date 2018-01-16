@@ -9,21 +9,26 @@ namespace GOST.Interfaces
     internal interface IXORCipher
     {
         /// <summary>
+        /// Первоначальная установка состояния шифра.
+        /// </summary>
+        /// <param name="synchroSignal">Синхропосылка.</param>
+        /// <param name="subKeys">Подключи.</param>
+        void SetSynchroSignal(byte[] synchroSignal, List<uint> subKeys);
+
+        /// <summary>
         /// Процесс шифрования открытого текста
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <param name="synchrosignal">64-х битная шифропосылка.</param>
         /// <returns>64-х битный блок шифротекста.</returns>
-        byte[] EncodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal);
+        byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
         /// Процесс дешифровки шифротекста.
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <param name="synchrosignal">64-х битная шифропосылка.</param>
         /// <returns>64-х битный блок открытого текста.</returns>
-        byte[] DecodeProcess(byte[] data, List<uint> subKeys, byte[] synchrosignal);
+        byte[] DecodeProcess(byte[] data, List<uint> subKeys);
     }
 }
