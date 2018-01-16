@@ -9,8 +9,8 @@ namespace GOST.Ciphers
 {
     internal class XORCipher : IXORCipher
     {
-        uint n3;
-        uint n4;
+        private uint n3;
+        private uint n4;
 
         private SubstitutionCipher substitution;
 
@@ -37,7 +37,7 @@ namespace GOST.Ciphers
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>64-х битный блок шифротекста.</returns>
+        /// <returns>Блок шифротекста.</returns>
         public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
             n3 += 16843009 % 4294967295;
@@ -59,7 +59,7 @@ namespace GOST.Ciphers
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>64-х битный блок открытого текста.</returns>
+        /// <returns>Блок открытого текста.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {
             return EncodeProcess(data, subKeys);

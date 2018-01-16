@@ -327,13 +327,80 @@ namespace GOST
         }
 
         /// <summary>
+        /// Шифрование гаммированием с обратной связью
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="synchroSignal">64 битная шифропосылка.</param>
+        /// <param name="message">Открытые данные.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Зашифрованные данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public byte[] ReverseXOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            Key = key;
+            Message = message;
+            SynchroSignal = synchroSignal;
+
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            byte[] encode = ReverseXORProcess(true);
+            return encode;
+        }
+
+        /// <summary>
+        /// Дешифрование гаммированием с обратной связью
+        /// </summary>
+        /// <param name="key">256 битный ключ.</param>
+        /// <param name="synchroSignal">64 битная шифропосылка.</param>
+        /// <param name="message">Шифроданные.</param>
+        /// <param name="sBlockType">Таблица шифрования</param>
+        /// <returns>Открытые данные.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public byte[] ReverseXORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        {
+            Key = key;
+            Message = message;
+            SynchroSignal = synchroSignal;
+
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            byte[] encode = ReverseXORProcess(false);
+            return encode;
+        }
+
+        /// <summary>
         /// Шифрование гаммированием с обратной связью.
         /// </summary>
+        /// <param name="flag">Шифрование/Дешифрование.</param>
         /// <returns>Результат шифрования.</returns>
         private byte[] ReverseXORProcess(bool flag)
         {
-            var cipher = new ReverseXORCipher();
-            return new byte[] { 1 };
+            var cipher = new ReverseXORCipher(sBlock);
+
+            GetSubKeys();
+
+            byte[] res = new byte[message.Length];
+            int index = 0;
+
+            cipher.SetSynchroSignal(synchroSignal);
+
+            foreach (var chunk in ReadByChunk())
+            {
+                if (flag)
+                {
+                    Array.Copy(cipher.EncodeProcess(chunk, subKeys), 0, res, index, chunk.Length);
+                }
+                else
+                {
+                    Array.Copy(cipher.DecodeProcess(chunk, subKeys), 0, res, index, chunk.Length);
+                }
+                index += chunk.Length;
+            }
+            return res;
         }
 
         /// <summary>
@@ -351,7 +418,6 @@ namespace GOST
         /// Чтение сообщения по блокам.
         /// </summary>
         /// <returns>64-х битный блок.</returns>
-        /// <exception cref="ArgumentException">Сообщение должно быть кратно 64 битам.</exception>
         private IEnumerable<byte[]> ReadByChunk()
         {
             for (int i = 0; i < message.Length; i += 8)
@@ -378,6 +444,7 @@ namespace GOST
                 sBlock = null;
                 message = null;
                 key = null;
+                synchroSignal = null;
                 subKeys.Clear();
             }
         }

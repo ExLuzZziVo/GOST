@@ -20,7 +20,7 @@ namespace GOST.Interfaces
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>64-х битный блок шифротекста.</returns>
+        /// <returns>Блок шифротекста.</returns>
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace GOST.Interfaces
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>64-х битный блок открытого текста.</returns>
+        /// <returns>Блок открытого текста.</returns>
         byte[] DecodeProcess(byte[] data, List<uint> subKeys);
     }
 }
