@@ -19,14 +19,14 @@ namespace GOST.Ciphers
         /// <summary>
         /// Первоначальная установка состояния шифра.
         /// </summary>
-        /// <param name="synchroSignal">Синхропосылка.</param>
+        /// <param name="iv">Синхропосылка.</param>
         /// <param name="subKeys">Подключи.</param>
-        public void SetIV(byte[] synchroSignal, List<uint> subKeys)
+        public void SetIV(byte[] iv, List<uint> subKeys)
         {
-            byte[] encodedSynchroSignal = substitution.EncodeProcess(synchroSignal, subKeys);
+            byte[] encodedIV = substitution.EncodeProcess(iv, subKeys);
 
-            n3 = BitConverter.ToUInt32(encodedSynchroSignal, 0);
-            n4 = BitConverter.ToUInt32(encodedSynchroSignal, 4);
+            n3 = BitConverter.ToUInt32(encodedIV, 0);
+            n4 = BitConverter.ToUInt32(encodedIV, 4);
         }
 
         /// <summary>

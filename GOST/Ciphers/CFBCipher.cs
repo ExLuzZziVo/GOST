@@ -19,11 +19,11 @@ namespace GOST.Ciphers
         /// <summary>
         /// Set generator state.
         /// </summary>
-        /// <param name="synchroSignal">IV</param>
-        public void SetIV(byte[] synchroSignal)
+        /// <param name="iv">IV</param>
+        public void SetIV(byte[] iv)
         {
-            n1 = BitConverter.ToUInt32(synchroSignal, 0);
-            n2 = BitConverter.ToUInt32(synchroSignal, 4);
+            n1 = BitConverter.ToUInt32(iv, 0);
+            n2 = BitConverter.ToUInt32(iv, 4);
         }
 
         /// <summary>
