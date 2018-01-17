@@ -55,7 +55,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Ciphers\SubstitutionCipherTests.cs" />
     <Compile Include="GOSTManagedTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -5,63 +5,82 @@ namespace GOST.Interfaces
     internal interface IManaged
     {
         /// <summary>
-        /// Шифрование.
+        /// Substitution encode.
         /// </summary>
-        /// <returns>Результат шифрования.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Opened message multiple of 64 bit.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
         byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Дешифрование.
+        /// Substitution decode.
         /// </summary>
-        /// <returns>Результат дешифрования.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Encoded message multiple of 64 bit.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
         byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Шифрование гаммированием.
+        /// XOR encode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Открытые данные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Зашифрованные данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Opened message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
         byte[] XOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Дешифрование гаммированием.
+        /// XOR decode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Шифроданные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Открытые данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Encoded message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
         byte[] XORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Шифрование гаммированием с обратной связью
+        /// CFB encode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Открытые данные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Зашифрованные данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Opened message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        byte[] ReverseXOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] CFBEncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Дешифрование гаммированием с обратной связью
+        /// CFB decode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Шифроданные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Открытые данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Encoded message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        byte[] ReverseXORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] CFBDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+
+        /// <summary>
+        /// MAC generator.
+        /// </summary>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Message (not less than 2 blocks).</param>
+        /// <param name="sBlockType">SBlock.</param>
+        /// <returns>MAC.</returns>
+        byte[] MACGenerator(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
     }
 }

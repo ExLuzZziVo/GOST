@@ -1,43 +1,38 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GOST.Interfaces
 {
     internal interface ISubstitutionCipher
     {
         /// <summary>
-        /// Процесс шифрования открытого текста
+        /// Substitution encode.
         /// </summary>
-        /// <param name="data">64-х битный блок открытого текста.</param>
-        /// <param name="subKeys">Коллекция подключей.</param>
-        /// <returns>64-х битный блок шифротекста.</returns>
+        /// <param name="data">Opened message multiple of 64 bits.</param>
+        /// <param name="subKeys">Subkeys.</param>
+        /// <returns>Encoded message multiple of 64 bits.</returns>
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// Процесс дешифровки шифротекста.
+        /// Substitution decode.
         /// </summary>
-        /// <param name="data">64-х битный блок шифротекста.</param>
-        /// <param name="subKey">Подключ.</param>
-        /// <returns>64-х битный блок открытого текста.</returns>
+        /// <param name="data">Encoded message multiple of 64 bits.</param>
+        /// <param name="subKeys">Subkeys.</param>
+        /// <returns>Opened message multiple of 64 bits.</returns>
         byte[] DecodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// Основная функция шифрования.
+        /// Main func.
         /// </summary>
-        /// <param name="littleBits">Младшие биты.</param>
-        /// <param name="subKey">Подключ.</param>
-        /// <returns>Результат шифрования функцией.</returns>
+        /// <param name="block">Little bits.</param>
+        /// <param name="subKey">Subkeys.</param>
+        /// <returns>Result.</returns>
         uint Function(uint block, uint subKey);
 
         /// <summary>
-        /// Подстановка.
+        /// Substitution.
         /// </summary>
-        /// <param name="block">Блок для подстановки.</param>
-        /// <returns>Блок после подстановки.</returns>
+        /// <param name="block">Block for substitution.</param>
+        /// <returns>Result.</returns>
         uint Substitute(uint value);
     }
 }

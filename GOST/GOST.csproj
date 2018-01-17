@@ -40,14 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ciphers\MACCipher.cs" />
-    <Compile Include="Ciphers\ReverseXORCipher.cs" />
+    <Compile Include="Ciphers\MACGenerator.cs" />
+    <Compile Include="Ciphers\CFBCipher.cs" />
     <Compile Include="Ciphers\SubstitutionCipher.cs" />
     <Compile Include="Ciphers\XORCipher.cs" />
-    <Compile Include="Interfaces\IMACCipher.cs" />
+    <Compile Include="Interfaces\IMACGenerator.cs" />
     <Compile Include="Interfaces\IManaged.cs" />
     <Compile Include="GOSTManaged.cs" />
-    <Compile Include="Interfaces\IReverseXORCipher.cs" />
+    <Compile Include="Interfaces\ICFBCipher.cs" />
     <Compile Include="Interfaces\ISBlocks.cs" />
     <Compile Include="Interfaces\ISubstitutionCipher.cs" />
     <Compile Include="Interfaces\IXORCipher.cs" />

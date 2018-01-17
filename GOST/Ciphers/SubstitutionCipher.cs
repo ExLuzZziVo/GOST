@@ -1,12 +1,7 @@
 ﻿using GOST.Interfaces;
-using GOST.SBlocks;
-using GOST.Types;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 [assembly: InternalsVisibleTo("GOSTTests")]
 
@@ -22,11 +17,11 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Процесс шифрования открытого текста
+        /// Substitution encode.
         /// </summary>
-        /// <param name="data">64-х битный блок открытого текста.</param>
-        /// <param name="subKeys">Коллекция подключей.</param>
-        /// <returns>64-х битный блок шифротекста.</returns>
+        /// <param name="data">Opened message multiple of 64 bits.</param>
+        /// <param name="subKeys">Subkeys.</param>
+        /// <returns>Encoded message multiple of 64 bits.</returns>
         public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
             var little = BitConverter.ToUInt32(data, 0);
@@ -54,22 +49,22 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Процесс дешифровки шифротекста.
+        /// Substitution decode.
         /// </summary>
-        /// <param name="data">64-х битный блок шифротекста.</param>
-        /// <param name="subKey">Подключ.</param>
-        /// <returns>64-х битный блок открытого текста.</returns>
+        /// <param name="data">Encoded message multiple of 64 bits.</param>
+        /// <param name="subKeys">Subkeys.</param>
+        /// <returns>Opened message multiple of 64 bits.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {
             return EncodeProcess(data, subKeys);
         }
 
         /// <summary>
-        /// Основная функция шифрования.
+        /// Main func.
         /// </summary>
-        /// <param name="block">Младшие биты.</param>
-        /// <param name="subKey">Подключ.</param>
-        /// <returns>Результат шифрования функцией.</returns>
+        /// <param name="block">Little bits.</param>
+        /// <param name="subKey">Subkeys.</param>
+        /// <returns>Result.</returns>
         public uint Function(uint block, uint subKey)
         {
             block = (block + subKey) % 4294967295;
@@ -79,10 +74,10 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Подстановка.
+        /// Substitution.
         /// </summary>
-        /// <param name="block">Блок для подстановки.</param>
-        /// <returns>Блок после подстановки.</returns>
+        /// <param name="block">Block for substitution.</param>
+        /// <returns>Result.</returns>
         public uint Substitute(uint value)
         {
             uint res = 0;

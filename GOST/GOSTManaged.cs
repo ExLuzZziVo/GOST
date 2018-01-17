@@ -3,58 +3,52 @@ using GOST.Interfaces;
 using GOST.SBlocks;
 using GOST.Types;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GOST
 {
     public class GOSTManaged : IManaged, IDisposable
     {
         /// <summary>
-        /// SBlock таблица.
+        /// SBlock table.
         /// </summary>
         private ISBlocks sBlock;
 
         /// <summary>
-        /// Тип SBlock таблицы.
+        /// SBlock type.
         /// </summary>
         private SBlockTypes sBlockType;
 
         /// <summary>
-        /// 256 битный ключ.
+        /// 256 bit key;
         /// </summary>
         private byte[] key;
 
         /// <summary>
-        /// Сообщение.
+        /// Message.
         /// </summary>
         private byte[] message;
 
         /// <summary>
-        /// 64 битная синхропосылка.
+        /// 64 bit IV.
         /// </summary>
-        private byte[] synchroSignal;
+        private byte[] iv;
 
         /// <summary>
-        /// 32 блока подключей.
-        /// Основа подключей - 8 32ух битных блоков.
-        /// 1 - 8 блоки: 8 основных 32 битных блоков от обычного ключа.
-        /// 9 - 24 блоки: циклическое повторение блоков 1 - 8 (нумерация от младших к старшим битам).
-        /// 25 - 32 блоки : блоки 8 - 1 (именно в таком порядке).
+        /// Subkeys.
         /// </summary>
         private List<uint> subKeys;
 
         /// <summary>
-        /// Флаг для IDisposable.
+        /// IDisposable flag;
         /// </summary>
         private bool released;
 
         /// <summary>
-        /// Проверка ключа на величину.
+        /// Check key length.
         /// </summary>
-        /// <exception cref="ArgumentException">Ключ должен иметь длину в 256 бит.</exception>
-        public byte[] Key
+        /// <exception cref="ArgumentException">Key must have 256 bit length.</exception>
+        private byte[] Key
         {
             get { return key; }
             set
@@ -73,8 +67,8 @@ namespace GOST
         /// <summary>
         /// Проверка сообщения на null.
         /// </summary>
-        /// <exception cref="ArgumentException">Пустое сообщение для шифрования.</exception>
-        public byte[] Message
+        /// <exception cref="ArgumentException">Empty message.</exception>
+        private byte[] Message
         {
             get { return message; }
             set
@@ -93,26 +87,23 @@ namespace GOST
         /// <summary>
         /// Проверка синхропосылки.
         /// </summary>
-        /// <exception cref="ArgumentException"></exception>
-        public byte[] SynchroSignal
+        /// <exception cref="ArgumentException">IV must have 256 bit length.</exception>
+        private byte[] IV
         {
-            get { return synchroSignal; }
+            get { return iv; }
             set
             {
                 if (value.Length != 8)
                 {
-                    throw new ArgumentException("Wrong synchrosignal. Try to use 64 bit synchrosignal.");
+                    throw new ArgumentException("Wrong IV. Try to use 64 bit IV.");
                 }
                 else if (value.Length == 8)
                 {
-                    synchroSignal = value;
+                    iv = value;
                 }
             }
         }
 
-        /// <summary>
-        /// Конструктор.
-        /// </summary>
         public GOSTManaged()
         {
             released = false;
@@ -120,9 +111,9 @@ namespace GOST
         }
 
         /// <summary>
-        /// Установка выбранного SBlockTable.
+        /// Set SBlockTable.
         /// </summary>
-        /// <exception cref="Exception">Неизвестное исключение. Обратитесь к разработчику.</exception>
+        /// <exception cref="Exception">Oops...</exception>
         private void SetSBlock()
         {
             switch (sBlockType)
@@ -152,12 +143,12 @@ namespace GOST
         }
 
         /// <summary>
-        /// Получение коллекции подключей.
+        /// Generate subkeys.
         /// </summary>
         private void GetSubKeys()
         {
             byte[] res = new byte[4];
-            // Первая стадия.
+            // Stage 1.
             int j = 0;
             for (int i = 0; i != key.Length; i++)
             {
@@ -173,12 +164,12 @@ namespace GOST
                     j++;
                 }
             }
-            // Вторая стадия.
+            // Stage 2.
             for (int i = 0; i != 16; i++)
             {
                 subKeys.Add(subKeys[i]);
             }
-            // Третья стадия.
+            // Stage 3.
             for (int i = 7; i != -1; i--)
             {
                 subKeys.Add(subKeys[i]);
@@ -186,12 +177,12 @@ namespace GOST
         }
 
         /// <summary>
-        /// Шифрование подстановкой.
+        /// Substitution encode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="message">Данные кратные 64 битам.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Зашифрованные данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Opened message multiple of 64 bit.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
         public byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
@@ -210,12 +201,12 @@ namespace GOST
         }
 
         /// <summary>
-        /// Дешифрование подстановкой.
+        /// Substitution decode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="message">Шифроданные кратные 64 битам.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Открытые данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Encoded message multiple of 64 bit.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
         public byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
@@ -234,10 +225,10 @@ namespace GOST
         }
 
         /// <summary>
-        /// Шифрование подстановкой.
+        /// Substitution.
         /// </summary>
-        /// <param name="flag">Шифрование/Дешифрование</param>
-        /// <returns>Результат шифрования.</returns>
+        /// <param name="flag">Encode/decode.</param>
+        /// <returns>Result.</returns>
         private byte[] SubstitutionProcess(bool flag)
         {
             var cipher = new SubstitutionCipher(sBlock);
@@ -265,20 +256,20 @@ namespace GOST
         }
 
         /// <summary>
-        /// Шифрование гаммированием.
+        /// XOR encode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Открытые данные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Зашифрованные данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Opened message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public byte[] XOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        public byte[] XOREncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
             Message = message;
-            SynchroSignal = synchroSignal;
+            IV = iv;
 
             this.sBlockType = sBlockType;
             SetSBlock();
@@ -288,25 +279,24 @@ namespace GOST
         }
 
         /// <summary>
-        /// Дешифрование гаммированием.
+        /// XOR decode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Шифроданные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Открытые данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Encoded message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public byte[] XORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        public byte[] XORDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
-            return XOREncode(key, synchroSignal, message, sBlockType); ;
+            return XOREncode(key, iv, message, sBlockType); ;
         }
 
         /// <summary>
-        /// Шифрование гаммированием.
+        /// XOR.
         /// </summary>
-        /// <param name="flag">Шифрование/Дешифрование</param>
-        /// <returns>Результат шифрования.</returns>
+        /// <returns>Result.</returns>
         private byte[] XORProcess()
         {
             var cipher = new XORCipher(sBlock);
@@ -316,7 +306,7 @@ namespace GOST
             byte[] res = new byte[message.Length];
             int index = 0;
 
-            cipher.SetSynchroSignal(synchroSignal, subKeys);
+            cipher.SetIV(iv, subKeys);
 
             foreach (var chunk in ReadByChunk())
             {
@@ -327,66 +317,66 @@ namespace GOST
         }
 
         /// <summary>
-        /// Шифрование гаммированием с обратной связью
+        /// CFB encode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Открытые данные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Зашифрованные данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Opened message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Encoded message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public byte[] ReverseXOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        public byte[] CFBEncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
             Message = message;
-            SynchroSignal = synchroSignal;
+            IV = iv;
 
             this.sBlockType = sBlockType;
             SetSBlock();
 
-            byte[] encode = ReverseXORProcess(true);
+            byte[] encode = CFBProcess(true);
             return encode;
         }
 
         /// <summary>
-        /// Дешифрование гаммированием с обратной связью
+        /// CFB decode.
         /// </summary>
-        /// <param name="key">256 битный ключ.</param>
-        /// <param name="synchroSignal">64 битная шифропосылка.</param>
-        /// <param name="message">Шифроданные.</param>
-        /// <param name="sBlockType">Таблица шифрования</param>
-        /// <returns>Открытые данные.</returns>
+        /// <param name="key">256 bit key.</param>
+        /// <param name="iv">64 bit IV</param>
+        /// <param name="message">Encoded message.</param>
+        /// <param name="sBlockType">STable.</param>
+        /// <returns>Opened message.</returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public byte[] ReverseXORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
+        public byte[] CFBDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
             Key = key;
             Message = message;
-            SynchroSignal = synchroSignal;
+            IV = iv;
 
             this.sBlockType = sBlockType;
             SetSBlock();
 
-            byte[] encode = ReverseXORProcess(false);
+            byte[] encode = CFBProcess(false);
             return encode;
         }
 
         /// <summary>
-        /// Шифрование гаммированием с обратной связью.
+        /// CFB.
         /// </summary>
-        /// <param name="flag">Шифрование/Дешифрование.</param>
-        /// <returns>Результат шифрования.</returns>
-        private byte[] ReverseXORProcess(bool flag)
+        /// <param name="flag">Encode/decode.</param>
+        /// <returns>Result.</returns>
+        private byte[] CFBProcess(bool flag)
         {
-            var cipher = new ReverseXORCipher(sBlock);
+            var cipher = new CFBCipher(sBlock);
 
             GetSubKeys();
 
             byte[] res = new byte[message.Length];
             int index = 0;
 
-            cipher.SetSynchroSignal(synchroSignal);
+            cipher.SetIV(iv);
 
             foreach (var chunk in ReadByChunk())
             {
@@ -403,21 +393,49 @@ namespace GOST
             return res;
         }
 
+
         /// <summary>
-        /// Шифрование иммитовставкой.
+        /// MAC generator.
         /// </summary>
-        /// <param name="flag">Шифрование/Дешифрование</param>
-        /// <returns>Результат шифрования.</returns>
-        private byte[] MACProcess(bool flag)
+        /// <param name="key">256 bit key.</param>
+        /// <param name="message">Message (not less than 2 blocks).</param>
+        /// <param name="sBlockType">SBlock.</param>
+        /// <returns>MAC.</returns>
+        public byte[] MACGenerator(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST)
         {
-            var cipher = new MACCipher();
-            return new byte[] { 1 };
+            Key = key;
+            Message = message;
+
+            this.sBlockType = sBlockType;
+            SetSBlock();
+
+            byte[] mac = MACProcess();
+            return mac;
         }
 
         /// <summary>
-        /// Чтение сообщения по блокам.
+        /// MAC.
         /// </summary>
-        /// <returns>64-х битный блок.</returns>
+        /// <returns>Result.</returns>
+        private byte[] MACProcess()
+        {
+            var generator = new MACGenerator(sBlock);
+
+            GetSubKeys();
+
+            byte[] res = new byte[8];
+
+            foreach (var chunk in ReadByChunk())
+            {
+                res = generator.Process(chunk, subKeys);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Read message by chunks.
+        /// </summary>
+        /// <returns>At least 64 bit block.</returns>
         private IEnumerable<byte[]> ReadByChunk()
         {
             for (int i = 0; i < message.Length; i += 8)
@@ -433,7 +451,7 @@ namespace GOST
         }
 
         /// <summary>
-        /// Освобождение ресурсов.
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -444,7 +462,7 @@ namespace GOST
                 sBlock = null;
                 message = null;
                 key = null;
-                synchroSignal = null;
+                iv = null;
                 subKeys.Clear();
             }
         }

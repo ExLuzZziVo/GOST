@@ -24,7 +24,7 @@ namespace GOST.Ciphers
         /// </summary>
         /// <param name="synchroSignal">Синхропосылка.</param>
         /// <param name="subKeys">Подключи.</param>
-        public void SetSynchroSignal(byte[] synchroSignal, List<uint> subKeys)
+        public void SetIV(byte[] synchroSignal, List<uint> subKeys)
         {
             byte[] encodedSynchroSignal = substitution.EncodeProcess(synchroSignal, subKeys);
 

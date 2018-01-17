@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GOST.Interfaces
 {
@@ -11,9 +7,9 @@ namespace GOST.Interfaces
         /// <summary>
         /// Первоначальная установка состояния шифра.
         /// </summary>
-        /// <param name="synchroSignal">Синхропосылка.</param>
+        /// <param name="iv">Синхропосылка.</param>
         /// <param name="subKeys">Подключи.</param>
-        void SetSynchroSignal(byte[] synchroSignal, List<uint> subKeys);
+        void SetIV(byte[] iv, List<uint> subKeys);
 
         /// <summary>
         /// Процесс шифрования открытого текста

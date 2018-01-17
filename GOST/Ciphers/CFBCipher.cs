@@ -1,42 +1,37 @@
 ﻿using GOST.Interfaces;
-using GOST.Types;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GOST.Ciphers
 {
-    internal class ReverseXORCipher : IReverseXORCipher
+    internal class CFBCipher : ICFBCipher
     {
         private uint n1;
         private uint n2;
 
         private SubstitutionCipher substitution;
 
-        public ReverseXORCipher(ISBlocks sBlock)
+        public CFBCipher(ISBlocks sBlock)
         {
             substitution = new SubstitutionCipher(sBlock);
         }
 
         /// <summary>
-        /// Первоначальная установка состояния шифра.
+        /// Set generator state.
         /// </summary>
-        /// <param name="synchroSignal">Синхропосылка.</param>
-        public void SetSynchroSignal(byte[] synchroSignal)
+        /// <param name="synchroSignal">IV</param>
+        public void SetIV(byte[] synchroSignal)
         {
             n1 = BitConverter.ToUInt32(synchroSignal, 0);
             n2 = BitConverter.ToUInt32(synchroSignal, 4);
         }
 
         /// <summary>
-        /// Процесс шифрования открытого текста
+        /// CFB encode.
         /// </summary>
-        /// <param name="data">Блок открытого текста.</param>
-        /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>Блок шифротекста.</returns>
+        /// <param name="data">Opened message.</param>
+        /// <param name="subKey">Subkeys.</param>
+        /// <returns>Encoded message.</returns>
         public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
             byte[] gamma = new byte[8];
@@ -56,11 +51,11 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Процесс дешифровки шифротекста.
+        /// CFB decode.
         /// </summary>
-        /// <param name="data">Блок открытого текста.</param>
-        /// <param name="subKey">Коллекция подключей.</param>
-        /// <returns>Блок открытого текста.</returns>
+        /// <param name="data">Encoded message.</param>
+        /// <param name="subKey">Subkeys.</param>
+        /// <returns>Opened message.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {
             byte[] gamma = new byte[8];
@@ -80,11 +75,11 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Применение XOR между гаммой и блоком данных.
+        /// XOR
         /// </summary>
-        /// <param name="gamma">Гамма.</param>
-        /// <param name="data">Блок данных.</param>
-        /// <returns>Результат XOR.</returns>
+        /// <param name="gamma">Gamma.</param>
+        /// <param name="data">Data.</param>
+        /// <returns>XOR result..</returns>
         private byte[] XOR(byte[] gamma, byte[] data)
         {
             int len = data.Length;

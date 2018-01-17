@@ -1,5 +1,4 @@
-﻿using GOST.Types;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,17 +14,14 @@ namespace GOST.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("message");
 
-            var gost = new GOSTManaged
-            {
-                Key = key,
-                Message = message
-            };
+            var gost = new GOSTManaged();
 
-            Console.WriteLine(Encoding.Default.GetString(gost.Key));
-            Console.WriteLine(Encoding.Default.GetString(key));
+            PrivateObject priv = new PrivateObject(gost);
+            priv.SetFieldOrProperty("Key", key);
+            priv.SetFieldOrProperty("Message", message);
 
-            Assert.AreEqual(Encoding.Default.GetString(gost.Key), Encoding.Default.GetString(key));
-            Assert.AreEqual(Encoding.Default.GetString(gost.Message), Encoding.Default.GetString(message));
+            Assert.AreEqual(Encoding.Default.GetString((byte[])priv.GetFieldOrProperty("Key")), Encoding.Default.GetString(key));
+            Assert.AreEqual(Encoding.Default.GetString((byte[])priv.GetFieldOrProperty("Message")), Encoding.Default.GetString(message));
         }
 
         [TestMethod()]
@@ -34,12 +30,10 @@ namespace GOST.Tests
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = Encoding.Default.GetBytes("message");
 
-            var gost = new GOSTManaged
-            {
-                Key = key
-            };
+            var gost = new GOSTManaged();
 
             PrivateObject priv = new PrivateObject(gost);
+            priv.SetFieldOrProperty("Key", key);
             priv.Invoke("GetSubKeys");
             List<uint> keys = (List<uint>)priv.GetFieldOrProperty("subKeys");
 
@@ -92,7 +86,7 @@ namespace GOST.Tests
         }
 
         [TestMethod()]
-        public void ReverseXOREncodeDecodeMessageTest()
+        public void CFBEncodeDecodeMessageTest()
         {
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] synchro = Encoding.Default.GetBytes("12345678");
@@ -103,19 +97,42 @@ namespace GOST.Tests
 
             using (var gost = new GOSTManaged())
             {
-                encode = gost.ReverseXOREncode(key, synchro, message);
+                encode = gost.CFBEncode(key, synchro, message);
             }
 
             using (var gost = new GOSTManaged())
             {
-                decode = gost.ReverseXORDecode(key, synchro, encode);
+                decode = gost.CFBDecode(key, synchro, encode);
             }
 
             Assert.AreEqual(Encoding.Default.GetString(message), Encoding.Default.GetString(decode));
         }
 
         [TestMethod()]
-        public void PerfomanceSubstitutionEncodeDecodeMessageTest()
+        public void MACGeneratorTest()
+        {
+            byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
+            byte[] message1 = Encoding.Default.GetBytes("1234567887654321");
+            byte[] message2 = Encoding.Default.GetBytes("2234567887654321");
+            byte[] message3 = Encoding.Default.GetBytes("3456788765432");
+
+            byte[] mac1 = new byte[8];
+            byte[] mac2 = new byte[8];
+            byte[] mac3 = new byte[8];
+
+            using (var gost = new GOSTManaged())
+            {
+                mac1 = gost.MACGenerator(key, message1);
+                mac2 = gost.MACGenerator(key, message2);
+                mac3 = gost.MACGenerator(key, message3);
+            }
+
+            Assert.AreNotEqual(mac1, mac2);
+            Assert.AreEqual(mac3.Length, 8);
+        }
+
+        [TestMethod()]
+        public void PerformanceSubstitutionEncodeDecodeMessageTest()
         {
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] message = new byte[100000000];
@@ -144,7 +161,7 @@ namespace GOST.Tests
         }
 
         [TestMethod()]
-        public void PerfomanceXOREncodeDecodeMessageTest()
+        public void PerformanceXOREncodeDecodeMessageTest()
         {
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] synchro = Encoding.Default.GetBytes("12345678");
@@ -174,7 +191,7 @@ namespace GOST.Tests
         }
 
         [TestMethod()]
-        public void PerfomanceReverseXOREncodeDecodeMessageTest()
+        public void PerformanceReverseCFBEncodeDecodeMessageTest()
         {
             byte[] key = Encoding.Default.GetBytes("12345678901234567890123456789012");
             byte[] synchro = Encoding.Default.GetBytes("12345678");
@@ -192,12 +209,12 @@ namespace GOST.Tests
 
             using (var gost = new GOSTManaged())
             {
-                encode = gost.ReverseXOREncode(key, synchro, message);
+                encode = gost.CFBEncode(key, synchro, message);
             }
 
             using (var gost = new GOSTManaged())
             {
-                decode = gost.ReverseXORDecode(key, synchro, encode);
+                decode = gost.CFBDecode(key, synchro, encode);
             }
 
             Assert.AreEqual(Encoding.Default.GetString(message), Encoding.Default.GetString(decode));
