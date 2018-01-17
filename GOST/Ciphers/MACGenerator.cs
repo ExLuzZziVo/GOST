@@ -100,7 +100,7 @@ namespace GOST.Ciphers
         /// <summary>
         /// Substitution.
         /// </summary>
-        /// <param name="block">Block for substitution.</param>
+        /// <param name="value">Block for substitution.</param>
         /// <returns>Result.</returns>
         private uint Substitute(uint value)
         {

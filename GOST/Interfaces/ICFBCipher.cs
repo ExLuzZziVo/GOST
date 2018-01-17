@@ -7,14 +7,14 @@ namespace GOST.Interfaces
         /// <summary>
         /// Set generator state.
         /// </summary>
-        /// <param name="synchroSignal">IV</param>
+        /// <param name="iv">IV</param>
         void SetIV(byte[] iv);
 
         /// <summary>
         /// CFB encode.
         /// </summary>
         /// <param name="data">Opened message.</param>
-        /// <param name="subKey">Subkeys.</param>
+        /// <param name="subKeys">Subkeys.</param>
         /// <returns>Encoded message.</returns>
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
@@ -22,7 +22,7 @@ namespace GOST.Interfaces
         /// CFB decode.
         /// </summary>
         /// <param name="data">Encoded message.</param>
-        /// <param name="subKey">Subkeys.</param>
+        /// <param name="subKeys">Subkeys.</param>
         /// <returns>Opened message.</returns>
         byte[] DecodeProcess(byte[] data, List<uint> subKeys);
     }

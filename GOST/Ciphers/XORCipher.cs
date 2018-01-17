@@ -33,7 +33,7 @@ namespace GOST.Ciphers
         /// Процесс шифрования открытого текста
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
-        /// <param name="subKey">Коллекция подключей.</param>
+        /// <param name="subKeys">Коллекция подключей.</param>
         /// <returns>Блок шифротекста.</returns>
         public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
@@ -55,7 +55,7 @@ namespace GOST.Ciphers
         /// Процесс дешифровки шифротекста.
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
-        /// <param name="subKey">Коллекция подключей.</param>
+        /// <param name="subKeys">Коллекция подключей.</param>
         /// <returns>Блок открытого текста.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {

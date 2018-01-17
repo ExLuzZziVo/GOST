@@ -30,7 +30,7 @@ namespace GOST.Ciphers
         /// CFB encode.
         /// </summary>
         /// <param name="data">Opened message.</param>
-        /// <param name="subKey">Subkeys.</param>
+        /// <param name="subKeys">Subkeys.</param>
         /// <returns>Encoded message.</returns>
         public byte[] EncodeProcess(byte[] data, List<uint> subKeys)
         {
@@ -54,7 +54,7 @@ namespace GOST.Ciphers
         /// CFB decode.
         /// </summary>
         /// <param name="data">Encoded message.</param>
-        /// <param name="subKey">Subkeys.</param>
+        /// <param name="subKeys">Subkeys.</param>
         /// <returns>Opened message.</returns>
         public byte[] DecodeProcess(byte[] data, List<uint> subKeys)
         {

@@ -31,7 +31,7 @@ namespace GOST.Interfaces
         /// <summary>
         /// Substitution.
         /// </summary>
-        /// <param name="block">Block for substitution.</param>
+        /// <param name="value">Block for substitution.</param>
         /// <returns>Result.</returns>
         uint Substitute(uint value);
     }

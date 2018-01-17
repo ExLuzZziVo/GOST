@@ -11,8 +11,6 @@ namespace GOST.Interfaces
         /// <param name="message">Opened message multiple of 64 bit.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Encoded message.</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
         byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
@@ -22,8 +20,6 @@ namespace GOST.Interfaces
         /// <param name="message">Encoded message multiple of 64 bit.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Opened message</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
         byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
@@ -34,9 +30,7 @@ namespace GOST.Interfaces
         /// <param name="message">Opened message.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Encoded message.</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        byte[] XOREncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] XOREncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
         /// XOR decode.
@@ -46,9 +40,7 @@ namespace GOST.Interfaces
         /// <param name="message">Encoded message.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Opened message.</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        byte[] XORDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] XORDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
         /// CFB encode.
@@ -58,9 +50,7 @@ namespace GOST.Interfaces
         /// <param name="message">Opened message.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Encoded message.</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        byte[] CFBEncode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] CFBEncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
         /// CFB decode.
@@ -70,9 +60,7 @@ namespace GOST.Interfaces
         /// <param name="message">Encoded message.</param>
         /// <param name="sBlockType">STable.</param>
         /// <returns>Opened message.</returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        byte[] CFBDecode(byte[] key, byte[] synchroSignal, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
+        byte[] CFBDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
         /// MAC generator.
