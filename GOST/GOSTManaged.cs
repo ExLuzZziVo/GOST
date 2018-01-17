@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 namespace GOST
 {
+    /// <summary>
+    /// GOST stream cipher.
+    /// </summary>
     public class GOSTManaged : IManaged, IDisposable
     {
         /// <summary>
@@ -65,7 +68,7 @@ namespace GOST
         }
 
         /// <summary>
-        /// Проверка сообщения на null.
+        /// Check message.
         /// </summary>
         /// <exception cref="ArgumentException">Empty message.</exception>
         private byte[] Message
@@ -85,7 +88,7 @@ namespace GOST
         }
 
         /// <summary>
-        /// Проверка синхропосылки.
+        /// Check IV.
         /// </summary>
         /// <exception cref="ArgumentException">IV must have 256 bit length.</exception>
         private byte[] IV
@@ -104,6 +107,9 @@ namespace GOST
             }
         }
 
+        /// <summary>
+        /// GOST stream cipher.
+        /// </summary>
         public GOSTManaged()
         {
             released = false;

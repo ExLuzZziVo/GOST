@@ -1,9 +1,6 @@
 ﻿using GOST.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("GOSTTests")]
 
 namespace GOST.Ciphers
 {
