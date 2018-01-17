@@ -21,7 +21,7 @@ using (var gost = new GOSTManaged())
 
 Optionally, you can change STables (6 tables):
 ```cs
-gost.XOREncode(key, iv, message, SBlockTypes.TS26);
+gost.XOREncode(key, iv, message, SBlockTypes.TC26);
 gost.SubstitutionEncode(key, message, SBlockTypes.GOST);
 ```
 By default set GOST table.
