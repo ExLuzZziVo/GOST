@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
 
 namespace GOST.Interfaces
 {
     internal interface ISubstitutionCipher
     {
         /// <summary>
-        /// Substitution encode.
+        ///     Substitution encode.
         /// </summary>
         /// <param name="data">Opened message multiple of 64 bits.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -13,7 +17,7 @@ namespace GOST.Interfaces
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// Substitution decode.
+        ///     Substitution decode.
         /// </summary>
         /// <param name="data">Encoded message multiple of 64 bits.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -21,7 +25,7 @@ namespace GOST.Interfaces
         byte[] DecodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// Main func.
+        ///     Main func.
         /// </summary>
         /// <param name="block">Little bits.</param>
         /// <param name="subKey">Subkeys.</param>
@@ -29,7 +33,7 @@ namespace GOST.Interfaces
         uint Function(uint block, uint subKey);
 
         /// <summary>
-        /// Substitution.
+        ///     Substitution.
         /// </summary>
         /// <param name="value">Block for substitution.</param>
         /// <returns>Result.</returns>

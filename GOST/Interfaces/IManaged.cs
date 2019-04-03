@@ -1,11 +1,15 @@
-﻿using GOST.Types;
+﻿#region
+
+using GOST.Types;
+
+#endregion
 
 namespace GOST.Interfaces
 {
     internal interface IManaged
     {
         /// <summary>
-        /// Substitution encode.
+        ///     Substitution encode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="message">Opened message multiple of 64 bit.</param>
@@ -14,7 +18,7 @@ namespace GOST.Interfaces
         byte[] SubstitutionEncode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// Substitution decode.
+        ///     Substitution decode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="message">Encoded message multiple of 64 bit.</param>
@@ -23,7 +27,7 @@ namespace GOST.Interfaces
         byte[] SubstitutionDecode(byte[] key, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// XOR encode.
+        ///     XOR encode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="iv">64 bit IV</param>
@@ -33,7 +37,7 @@ namespace GOST.Interfaces
         byte[] XOREncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// XOR decode.
+        ///     XOR decode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="iv">64 bit IV</param>
@@ -43,7 +47,7 @@ namespace GOST.Interfaces
         byte[] XORDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// CFB encode.
+        ///     CFB encode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="iv">64 bit IV</param>
@@ -53,7 +57,7 @@ namespace GOST.Interfaces
         byte[] CFBEncode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// CFB decode.
+        ///     CFB decode.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="iv">64 bit IV</param>
@@ -63,7 +67,7 @@ namespace GOST.Interfaces
         byte[] CFBDecode(byte[] key, byte[] iv, byte[] message, SBlockTypes sBlockType = SBlockTypes.GOST);
 
         /// <summary>
-        /// MAC generator.
+        ///     MAC generator.
         /// </summary>
         /// <param name="key">256 bit key.</param>
         /// <param name="message">Message (not less than 2 blocks).</param>

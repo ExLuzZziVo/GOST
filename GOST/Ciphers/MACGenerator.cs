@@ -1,17 +1,20 @@
-﻿using GOST.Interfaces;
+﻿#region
+
 using System;
 using System.Collections.Generic;
+using GOST.Interfaces;
+
+#endregion
 
 namespace GOST.Ciphers
 {
     internal class MACGenerator : IMACGenerator
     {
+        private readonly ISBlocks sBlock;
         private uint n1;
         private uint n2;
 
         private byte[] round;
-
-        private ISBlocks sBlock;
 
         public MACGenerator(ISBlocks sBlock)
         {
@@ -19,7 +22,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// MAC generator.
+        ///     MAC generator.
         /// </summary>
         /// <param name="data">Message.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -28,12 +31,9 @@ namespace GOST.Ciphers
         {
             if (data.Length != 8)
             {
-                byte[] temp = new byte[8];
+                var temp = new byte[8];
                 Array.Copy(data, 0, temp, 0, data.Length);
-                for (int i = data.Length - 1; i != 8; i++)
-                {
-                    temp[i] = 0;
-                }
+                for (var i = data.Length - 1; i != 8; i++) temp[i] = 0;
                 data = temp;
             }
 
@@ -46,10 +46,7 @@ namespace GOST.Ciphers
             }
             else if (round != null)
             {
-                for (int i = 0; i != 8; i++)
-                {
-                    round[i] = (byte)(round[i] ^ data[i]);
-                }
+                for (var i = 0; i != 8; i++) round[i] = (byte) (round[i] ^ data[i]);
 
                 n1 = BitConverter.ToUInt32(round, 0);
                 n2 = BitConverter.ToUInt32(round, 4);
@@ -61,7 +58,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// 16-round version of substitution cipher.
+        ///     16-round version of substitution cipher.
         /// </summary>
         /// <param name="little">Little bits.</param>
         /// <param name="big">Big bits.</param>
@@ -69,7 +66,7 @@ namespace GOST.Ciphers
         /// <returns>Result.</returns>
         private byte[] ShortSubstitute(uint little, uint big, List<uint> subKeys)
         {
-            for (int i = 0; i != 16; i++)
+            for (var i = 0; i != 16; i++)
             {
                 var round = big ^ Function(little, subKeys[i]);
 
@@ -77,14 +74,14 @@ namespace GOST.Ciphers
                 little = round;
             }
 
-            byte[] result = new byte[8];
+            var result = new byte[8];
             Array.Copy(BitConverter.GetBytes(little), 0, result, 0, 4);
             Array.Copy(BitConverter.GetBytes(big), 0, result, 4, 4);
             return result;
         }
 
         /// <summary>
-        /// Main func.
+        ///     Main func.
         /// </summary>
         /// <param name="block">Little bits.</param>
         /// <param name="subKey">Subkeys.</param>
@@ -98,7 +95,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Substitution.
+        ///     Substitution.
         /// </summary>
         /// <param name="value">Block for substitution.</param>
         /// <returns>Result.</returns>
@@ -106,11 +103,11 @@ namespace GOST.Ciphers
         {
             uint res = 0;
 
-            for (int i = 0; i != 8; i++)
+            for (var i = 0; i != 8; i++)
             {
-                byte index = (byte)(value >> (4 * i) & 0x0f);
-                byte block = sBlock.SBlockTable[i][index];
-                res |= (uint)block << (4 * i);
+                var index = (byte) ((value >> (4 * i)) & 0x0f);
+                var block = sBlock.SBlockTable[i][index];
+                res |= (uint) block << (4 * i);
             }
 
             return res;

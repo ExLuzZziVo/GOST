@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
 
 namespace GOST.Interfaces
 {
     internal interface IMACGenerator
     {
         /// <summary>
-        /// MAC generator.
+        ///     MAC generator.
         /// </summary>
         /// <param name="data">Message.</param>
         /// <param name="subKeys">Subkeys.</param>

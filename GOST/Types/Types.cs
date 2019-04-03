@@ -1,10 +1,15 @@
 ﻿namespace GOST.Types
 {
     /// <summary>
-    /// Enum of STables
+    ///     Enum of STables
     /// </summary>
     public enum SBlockTypes
     {
-        GOST, CryptoProA, CryptoProB, CryptoProC, CryptoProD, TC26
+        GOST,
+        CryptoProA,
+        CryptoProB,
+        CryptoProC,
+        CryptoProD,
+        TC26
     }
 }

@@ -1,12 +1,16 @@
-﻿using GOST.Interfaces;
+﻿#region
+
 using System;
 using System.Collections.Generic;
+using GOST.Interfaces;
+
+#endregion
 
 namespace GOST.Ciphers
 {
     internal class SubstitutionCipher : ISubstitutionCipher
     {
-        private ISBlocks sBlock;
+        private readonly ISBlocks sBlock;
 
         public SubstitutionCipher(ISBlocks sBlock)
         {
@@ -14,7 +18,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Substitution encode.
+        ///     Substitution encode.
         /// </summary>
         /// <param name="data">Opened message multiple of 64 bits.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -24,7 +28,7 @@ namespace GOST.Ciphers
             var little = BitConverter.ToUInt32(data, 0);
             var big = BitConverter.ToUInt32(data, 4);
 
-            for (int i = 0; i != 32; i++)
+            for (var i = 0; i != 32; i++)
             {
                 var round = big ^ Function(little, subKeys[i]);
 
@@ -39,14 +43,14 @@ namespace GOST.Ciphers
                 }
             }
 
-            byte[] result = new byte[8];
+            var result = new byte[8];
             Array.Copy(BitConverter.GetBytes(little), 0, result, 0, 4);
             Array.Copy(BitConverter.GetBytes(big), 0, result, 4, 4);
             return result;
         }
 
         /// <summary>
-        /// Substitution decode.
+        ///     Substitution decode.
         /// </summary>
         /// <param name="data">Encoded message multiple of 64 bits.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -57,7 +61,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Main func.
+        ///     Main func.
         /// </summary>
         /// <param name="block">Little bits.</param>
         /// <param name="subKey">Subkeys.</param>
@@ -71,7 +75,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Substitution.
+        ///     Substitution.
         /// </summary>
         /// <param name="value">Block for substitution.</param>
         /// <returns>Result.</returns>
@@ -79,11 +83,11 @@ namespace GOST.Ciphers
         {
             uint res = 0;
 
-            for (int i = 0; i != 8; i++)
+            for (var i = 0; i != 8; i++)
             {
-                byte index = (byte)(value >> (4 * i) & 0x0f);
-                byte block = sBlock.SBlockTable[i][index];
-                res |= (uint)block << (4 * i);
+                var index = (byte) ((value >> (4 * i)) & 0x0f);
+                var block = sBlock.SBlockTable[i][index];
+                res |= (uint) block << (4 * i);
             }
 
             return res;

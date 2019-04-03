@@ -1,15 +1,18 @@
-﻿using GOST.Interfaces;
+﻿#region
+
 using System;
 using System.Collections.Generic;
+using GOST.Interfaces;
+
+#endregion
 
 namespace GOST.Ciphers
 {
     internal class XORCipher : IXORCipher
     {
+        private readonly SubstitutionCipher substitution;
         private uint n3;
         private uint n4;
-
-        private SubstitutionCipher substitution;
 
         public XORCipher(ISBlocks sBlock)
         {
@@ -17,20 +20,20 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Первоначальная установка состояния шифра.
+        ///     Первоначальная установка состояния шифра.
         /// </summary>
         /// <param name="iv">Синхропосылка.</param>
         /// <param name="subKeys">Подключи.</param>
         public void SetIV(byte[] iv, List<uint> subKeys)
         {
-            byte[] encodedIV = substitution.EncodeProcess(iv, subKeys);
+            var encodedIV = substitution.EncodeProcess(iv, subKeys);
 
             n3 = BitConverter.ToUInt32(encodedIV, 0);
             n4 = BitConverter.ToUInt32(encodedIV, 4);
         }
 
         /// <summary>
-        /// Процесс шифрования открытого текста
+        ///     Процесс шифрования открытого текста
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKeys">Коллекция подключей.</param>
@@ -40,10 +43,10 @@ namespace GOST.Ciphers
             n3 += 16843009 % 4294967295;
             n4 += 16843012 % 4294967294;
 
-            uint n1 = n3;
-            uint n2 = n4;
+            var n1 = n3;
+            var n2 = n4;
 
-            byte[] gamma = new byte[8];
+            var gamma = new byte[8];
             Array.Copy(BitConverter.GetBytes(n1), 0, gamma, 0, 4);
             Array.Copy(BitConverter.GetBytes(n2), 0, gamma, 4, 4);
             gamma = substitution.EncodeProcess(gamma, subKeys);
@@ -52,7 +55,7 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Процесс дешифровки шифротекста.
+        ///     Процесс дешифровки шифротекста.
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKeys">Коллекция подключей.</param>
@@ -63,20 +66,17 @@ namespace GOST.Ciphers
         }
 
         /// <summary>
-        /// Применение XOR между гаммой и блоком данных.
+        ///     Применение XOR между гаммой и блоком данных.
         /// </summary>
         /// <param name="gamma">Гамма.</param>
         /// <param name="data">Блок данных.</param>
         /// <returns>Результат XOR.</returns>
         private byte[] XOR(byte[] gamma, byte[] data)
         {
-            int len = data.Length;
-            byte[] res = new byte[len];
+            var len = data.Length;
+            var res = new byte[len];
 
-            for (int i = 0; i != len; i++)
-            {
-                res[i] = (byte)(gamma[i] ^ data[i]);
-            }
+            for (var i = 0; i != len; i++) res[i] = (byte) (gamma[i] ^ data[i]);
 
             return res;
         }

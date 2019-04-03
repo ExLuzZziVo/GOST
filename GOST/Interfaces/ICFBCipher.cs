@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
 
 namespace GOST.Interfaces
 {
     internal interface ICFBCipher
     {
         /// <summary>
-        /// Set generator state.
+        ///     Set generator state.
         /// </summary>
         /// <param name="iv">IV</param>
         void SetIV(byte[] iv);
 
         /// <summary>
-        /// CFB encode.
+        ///     CFB encode.
         /// </summary>
         /// <param name="data">Opened message.</param>
         /// <param name="subKeys">Subkeys.</param>
@@ -19,7 +23,7 @@ namespace GOST.Interfaces
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// CFB decode.
+        ///     CFB decode.
         /// </summary>
         /// <param name="data">Encoded message.</param>
         /// <param name="subKeys">Subkeys.</param>

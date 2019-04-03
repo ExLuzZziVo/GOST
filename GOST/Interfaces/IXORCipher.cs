@@ -1,18 +1,22 @@
-﻿using System.Collections.Generic;
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
 
 namespace GOST.Interfaces
 {
     internal interface IXORCipher
     {
         /// <summary>
-        /// Первоначальная установка состояния шифра.
+        ///     Первоначальная установка состояния шифра.
         /// </summary>
         /// <param name="iv">Синхропосылка.</param>
         /// <param name="subKeys">Подключи.</param>
         void SetIV(byte[] iv, List<uint> subKeys);
 
         /// <summary>
-        /// Процесс шифрования открытого текста
+        ///     Процесс шифрования открытого текста
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKeys">Коллекция подключей.</param>
@@ -20,7 +24,7 @@ namespace GOST.Interfaces
         byte[] EncodeProcess(byte[] data, List<uint> subKeys);
 
         /// <summary>
-        /// Процесс дешифровки шифротекста.
+        ///     Процесс дешифровки шифротекста.
         /// </summary>
         /// <param name="data">Блок открытого текста.</param>
         /// <param name="subKeys">Коллекция подключей.</param>
